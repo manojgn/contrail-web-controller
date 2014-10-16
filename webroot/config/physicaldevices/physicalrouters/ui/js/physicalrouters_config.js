@@ -426,7 +426,6 @@ function physicalRoutersConfig() {
         }
         var vRouterDD = $('#ddVirtualRouters').data('contrailDropdown');            
         vRouterDD.setData(vRoutersDS);
-        vRouterDD.value('');         
     }
     
     window.failureHandlerForVirtualRouters = function(error) {
