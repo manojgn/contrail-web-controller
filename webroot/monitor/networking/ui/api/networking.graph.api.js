@@ -1000,6 +1000,7 @@ function getInstanceConnectedGraph(req, res, appData) {
     commonUtils.createReqObj(dataObjArr, instanceUrl, global.HTTP_REQUEST_GET, null, opApiServer, null, appData);
 
     async.map(dataObjArr, commonUtils.getServerResponseByRestApi(configApiServer, false), function (err, instanceData) {
+        console.log("instanceData as:", JSON.stringify(instanceData));
         var interfaceList = instanceData[0]['UveVirtualMachineAgent']['interface_list'];
         interfaceUrl = '/analytics/uves/virtual-machine-interface/*?kfilt=' + interfaceList.join(",") + "&cfilt=" + interfaceFilters.join(",");
 
