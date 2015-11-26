@@ -141,6 +141,7 @@ define(
                         var upTime = new XDate(jsonPath(d,'$..uptime')[0]/1000);
                         var currTime = new XDate();
                         var procStateList;
+
                         try{
                             obj['status'] = getOverallNodeStatus(d,"control");
                         }catch(e){
@@ -148,13 +149,33 @@ define(
                         }
                         obj['processAlerts'] =
                             infraMonitorAlertUtils.getProcessAlerts(d,obj);
-                        obj['isGeneratorRetrieved'] = false;
                         obj['nodeAlerts'] =
                             infraMonitorAlertUtils.processControlNodeAlerts(obj);
-                        obj['alerts'] =
-                            obj['nodeAlerts'].concat(obj['processAlerts'])
-                                                .sort(dashboardUtils.sortInfraAlerts);
-                        obj['color'] = monitorInfraUtils.getControlNodeColor(d,obj);
+                        var alarms;
+                        if(d['value'] != null &&
+                                d['value']['UVEAlarms'] != null &&
+                                d['value']['UVEAlarms']['alarms'] != null) {
+                            alarms = d['value']['UVEAlarms']['alarms'];
+                        }
+                        if(cowu.getAlarmsFromAnalytics) {
+                            obj['alerts'] = coreAlarmUtils.getAlertsFromAnalytics(
+                                                            {
+                                                                data:obj,
+                                                                alarms:alarms,
+                                                                nodeType:'control-node'
+//                                                                processPath:processPath
+                                                            });
+                            obj['color'] = coreAlarmUtils.getControlNodeColor(d, obj);
+                        } else {
+                            obj['alerts'] =
+                                obj['nodeAlerts'].concat(obj['processAlerts'])
+                                                    .sort(dashboardUtils.sortInfraAlerts);
+                            obj['color'] = monitorInfraUtils.getControlNodeColor(d,obj);
+                        }
+
+                        obj['isGeneratorRetrieved'] = false;
+
+
                         obj['rawData'] = d;
                         obj['cores'] = self.getCores(d);
                         retArr.push(obj);
@@ -281,7 +302,7 @@ define(
                             getValueByJsonPath(dValue,
                                 'VrouterAgent;build_info')), noDataStr);
                         obj['type'] = 'vRouter';
-                        obj['display_type'] = 'vRouter';
+                        obj['display_type'] = 'Virtual Router';
                         obj['isPartialUveMissing'] = false;
                         obj['errorIntfCnt'] = 0;
                         if (obj['isUveMissing'] == false) {
@@ -320,10 +341,28 @@ define(
                         obj['isGeneratorRetrieved'] = false;
                         obj['nodeAlerts'] = infraMonitorAlertUtils.processvRouterAlerts(
                             obj);
-                        obj['alerts'] = obj['nodeAlerts'].concat(obj['processAlerts']).sort(
-                            dashboardUtils.sortInfraAlerts);
-                        //Decide color based on parameters
-                        obj['color'] = monitorInfraUtils.getvRouterColor(d, obj);
+                        var alarms;
+                        if(d['value'] != null &&
+                                d['value']['UVEAlarms'] != null &&
+                                d['value']['UVEAlarms']['alarms'] != null) {
+                            alarms = d['value']['UVEAlarms']['alarms'];
+                        }
+                        if(cowu.getAlarmsFromAnalytics) {
+                            obj['alerts'] = coreAlarmUtils.getAlertsFromAnalytics(
+                                                            {
+                                                                data:obj,
+                                                                alarms:alarms,
+                                                                nodeType:'vrouter',
+                                                            });
+                          //Decide color based on parameters
+                            obj['color'] = coreAlarmUtils.getvRouterColor(d, obj);
+                        } else {
+                            obj['alerts'] = obj['nodeAlerts'].concat(obj['processAlerts']).sort(
+                                    dashboardUtils.sortInfraAlerts);
+                          //Decide color based on parameters
+                            obj['color'] = monitorInfraUtils.getvRouterColor(d, obj);
+                        }
+
                         obj['cores'] = self.getCores(d);
                         obj['rawData'] = d;
                         retArr.push(obj);
@@ -425,9 +464,25 @@ define(
                         obj['genCount'] = genInfos.length;
                         obj['nodeAlerts'] = infraMonitorAlertUtils
                                                 .processAnalyticsNodeAlerts(obj);
-                        obj['alerts'] = obj['nodeAlerts'].concat(obj['processAlerts'])
+                        var alarms;
+                        if(d['value'] != null &&
+                                d['value']['UVEAlarms'] != null &&
+                                d['value']['UVEAlarms']['alarms'] != null) {
+                            alarms = d['value']['UVEAlarms']['alarms'];
+                        }
+                        if(cowu.getAlarmsFromAnalytics) {
+                            obj['alerts'] = coreAlarmUtils.getAlertsFromAnalytics(
+                                                            {
+                                                                data:obj,
+                                                                alarms:alarms,
+                                                                nodeType:'analytics-node'
+                                                            });
+                            obj['color'] = coreAlarmUtils.getAnalyticsNodeColor(d, obj);
+                        } else {
+                            obj['alerts'] = obj['nodeAlerts'].concat(obj['processAlerts'])
                                             .sort(dashboardUtils.sortInfraAlerts);
-                        obj['color'] = monitorInfraUtils.getAnalyticsNodeColor(d, obj);
+                            obj['color'] = monitorInfraUtils.getAnalyticsNodeColor(d, obj);
+                        }
                         obj['cores'] = self.getCores(d);
                         obj['rawData'] = d;
                         retArr.push(obj);
@@ -514,10 +569,27 @@ define(
                         obj['isGeneratorRetrieved'] = false;
                         obj['nodeAlerts'] =
                             infraMonitorAlertUtils.processConfigNodeAlerts(obj);
-                        obj['alerts'] =
-                            obj['nodeAlerts'].concat(obj['processAlerts'])
-                                .sort(dashboardUtils.sortInfraAlerts);
-                        obj['color'] = monitorInfraUtils.getConfigNodeColor(d,obj);
+                        var alarms;
+                        if(d['value']['configNode'] != null &&
+                                d['value']['configNode']['UVEAlarms'] != null &&
+                                d['value']['configNode']['UVEAlarms']['alarms'] != null) {
+                            alarms = d['value']['configNode']['UVEAlarms']['alarms'];
+                        }
+
+                        if(cowu.getAlarmsFromAnalytics) {
+                            obj['alerts'] = coreAlarmUtils.getAlertsFromAnalytics(
+                                                            {
+                                                                data:obj,
+                                                                alarms:alarms,
+                                                                nodeType:'config-node'
+                                                            });
+                            obj['color'] = coreAlarmUtils.getConfigNodeColor(d,obj);
+                        } else {
+                            obj['alerts'] =
+                                obj['nodeAlerts'].concat(obj['processAlerts'])
+                                    .sort(dashboardUtils.sortInfraAlerts);
+                            obj['color'] = monitorInfraUtils.getConfigNodeColor(d,obj);
+                        }
                         obj['cores'] = self.getCores(d);
                         obj['rawData'] = d;
                         retArr.push(obj);
@@ -608,9 +680,28 @@ define(
                             monitorInfraUtils.isNTPUnsynced(jsonPath(d,'$..NodeStatus')[0]);
                         obj['nodeAlerts'] =
                             infraMonitorAlertUtils.processDbNodeAlerts(obj);
-                        obj['alerts'] = obj['nodeAlerts'].concat(obj['processAlerts'])
-                            .sort(dashboardUtils.sortInfraAlerts);
-                        obj['color'] = monitorInfraUtils.getDatabaseNodeColor(d,obj);
+                        var alarms;
+                        if(d['value'] != null &&
+                                d['value']['databaseNode'] != null &&
+                                d['value']['databaseNode']['UVEAlarms'] != null &&
+                                d['value']['databaseNode']['UVEAlarms']['alarms'] != null) {
+                            alarms = d['value']['databaseNode']['UVEAlarms']['alarms'];
+                        }
+                        if(cowu.getAlarmsFromAnalytics) {
+                            obj['alerts'] = coreAlarmUtils.getAlertsFromAnalytics(
+                                                            {
+                                                                data:obj,
+                                                                alarms:alarms,
+                                                                nodeType:'vrouter',
+                                                            });
+                          //Decide color based on parameters
+                            obj['color'] = coreAlarmUtils.getDatabaseNodeColor(d, obj);
+                        } else {
+                            obj['alerts'] = obj['nodeAlerts'].concat(obj['processAlerts'])
+                                        .sort(dashboardUtils.sortInfraAlerts);
+                            obj['color'] = monitorInfraUtils.getDatabaseNodeColor(d,obj);
+                        }
+
                         obj['cores'] = self.getCores(d);
                         obj['rawData'] = d;
                         retArr.push(obj);
@@ -736,7 +827,7 @@ define(
                                     } else {
                                        routesArr.push({
                                           prefix:prefix,
-                                          dispPrefix:'',
+                                          dispPrefix:prefix,
                                           table:rtTable,
                                           instance:routeInstances[i],
                                           addrFamily:addfamily,
