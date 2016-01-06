@@ -370,6 +370,50 @@ module.exports = function (grunt) {
                 feature: 'ct'
             }
         },
+        controlNodePeersGridView: {
+            options: {
+                files: [
+                    {
+                        pattern: 'contrail-web-controller/webroot/monitor/infrastructure/controlnode/ui/js/*.js',
+                        included: false
+                    },
+                    {
+                        pattern: 'contrail-web-controller/webroot/monitor/infrastructure/controlnode/ui/js/**/*.js',
+                        included: false
+                    },
+                    {
+                        pattern: 'contrail-web-controller/webroot/monitor/infrastructure/controlnode/test/ui/views/*.js',
+                        included: false
+                    },
+                    {
+                        pattern: 'contrail-web-controller/webroot/monitor/infrastructure/common/ui/js/**/*.js',
+                        included: false
+                    },
+                    {
+                        pattern: 'contrail-web-core/webroot/js/**/*.js',
+                        included: false
+                    }
+                ],
+                preprocessors: {
+                    'contrail-web-controller/webroot/monitor/infrastructure/controlnode/ui/js/**/*.js': ['coverage']
+                },
+                junitReporter: {
+                    outputDir: __dirname + '/reports/tests/config/views/',
+                    outputFile: 'controlnode-peers-grid-view-test-results.xml',
+                    suite: 'controlNodePeersGridView',
+                    useBrowserName: false
+                },
+                htmlReporter: {
+                    outputFile: __dirname + '/reports/tests/monitor/infrastructure/views/controlnode-peers-grid-view-test-results.html'
+                },
+                coverageReporter: {
+                    type: 'html',
+                    dir: __dirname + '/reports/coverage/monitor/infrastucture/views/controlnode-peers-grid-view/',
+                    subdir: browserSubdirFn
+                },
+                feature: 'monInfra'
+            }
+        },
         physicalRoutersGridView: {
             options: {
                 files: [
@@ -566,7 +610,8 @@ module.exports = function (grunt) {
 
     var allTestFiles = [],
         allNMTestFiles = [],
-        allConfigTestFiles = [];
+        allConfigTestFiles = [],
+        allMonInfraTestFiles = [];
 
     for (var target in karmaConfig) {
         if (target != 'options') {
@@ -577,6 +622,9 @@ module.exports = function (grunt) {
             }
             if(feature == 'config') {
                 allConfigTestFiles = allConfigTestFiles.concat(karmaConfig[target]['options']['files']);
+            }
+            if(feature == 'monInfra') {
+                allMonInfraTestFiles = allMonInfraTestFiles.concat(karmaConfig[target]['options']['files']);
             }
             karmaConfig[target]['options']['files'] = commonFiles.concat(karmaConfig[target]['options']['files']);
         }
@@ -647,6 +695,39 @@ module.exports = function (grunt) {
             }
         }
     };
+    
+    karmaConfig['runAllMonInfraTests'] = {
+            options: {
+                files: [],
+                preprocessors: {
+                    'contrail-web-core/webroot/js/**/*.js': ['coverage'],
+                    'contrail-web-controller/webroot/monitor/infrastructure/**/ui/js/**/*.js': ['coverage']
+                },
+                junitReporter: {
+                    outputDir: __dirname + '/reports/tests/mon-infra/',
+                    outputFile: 'moninfra-test-results.xml',
+                    suite: 'config',
+                    useBrowserName: false
+                },
+                htmlReporter: {
+                    outputFile: __dirname + '/reports/tests/config/mon-infra-test-results.html'
+                },
+                coverageReporter: {
+                    reporters: [
+                        {
+                            type: 'html',
+                            dir: __dirname + '/reports/coverage/mon-infra/',
+                            subdir: browserSubdirFn
+                        },
+                        {
+                            type: 'json',
+                            dir: __dirname + '/reports/coverage/mon-infra/',
+                            subdir: browserSubdirFn
+                        }
+                    ]
+                }
+            }
+        };
 
     karmaConfig['runAllTests'] = {
         options: {
@@ -674,6 +755,7 @@ module.exports = function (grunt) {
     // Now add the test files along with common files.
     karmaConfig['runAllNMTests']['options']['files'] = commonFiles.concat(allNMTestFiles);
     karmaConfig['runAllConfigTests']['options']['files'] = commonFiles.concat(allConfigTestFiles);
+    karmaConfig['runAllMonInfraTests']['options']['files'] = commonFiles.concat(allMonInfraTestFiles);
     karmaConfig['runAllTests']['options']['files'] = commonFiles.concat(allTestFiles);
 
     grunt.initConfig({
@@ -766,6 +848,22 @@ module.exports = function (grunt) {
             grunt.task.run(['karma:networkView', 'karma:projectListView', 'karma:projectView', 'karma:dashBoardView',
                 'karma:instanceListView', 'karma:instanceView', 'karma:flowListView', 'karma:flowGridView']);
         }
+    });
+
+    grunt.registerTask('monInfra', 'Monitor Infrastructure Test Cases', function(target){
+        var testDir = 'runAllMonInfraTests';
+        switch(target) {
+            case 'controlNodePeers' :
+                grunt.task.run('karma:controlNodePeersGridView');
+                testDir = 'controlNodePeersGridView';
+                break;
+            default :
+                grunt.task.run('karma:runAllMonInfraTests');
+                testDir = 'runAllMonInfraTests';
+                break;
+        };
+        grunt.log.writeln('Test results: ' + karmaConfig[testDir]['options']['htmlReporter']['outputFile']);
+        printCoverageReportLoc(karmaConfig[testDir]['options']['coverageReporter']);
     });
 
     grunt.registerTask('config', 'Config Test Cases', function(target){

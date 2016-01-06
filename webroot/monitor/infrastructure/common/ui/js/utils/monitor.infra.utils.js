@@ -1,8 +1,8 @@
 define([
     'underscore',
     'contrail-list-model',
-    'js/views/LoginWindowView',
-    'js/models/LoginWindowModel'
+    'loginwindow-view',
+    'loginwindow-model'
 ], function (_, ContrailListModel, LoginWindowView, LoginWindowModel) {
     var MonitorInfraUtils = function () {
         var self = this;

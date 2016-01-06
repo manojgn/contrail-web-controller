@@ -35,7 +35,13 @@ define([
         this.DNS_RECORDS_GRID_VIEW_TEST_MODULE = 'DNS Records Grid View - Common Tests';
         this.ACTIVE_DNS_GRID_VIEW_TEST_MODULE = 'Active DNS Grid View - Common Tests';
 
-
+        /**
+         * Monitor Infra messages Starts
+         */
+        this.CONTROLNODE_PEERS_GRID_VIEW_COMMON_TEST_MODULE = 'Control Node Peers Grid View - Common Tests';
+        /*
+         * Monitor Infra messages Ends
+         */
         this.get = function () {
             var args = arguments;
             return args[0].replace(/\{(\d+)\}/g, function (m, n) {
