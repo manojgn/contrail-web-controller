@@ -494,70 +494,109 @@ define([
             }
         },
         this.getPortTupleViewConfig = function(isDisabled) {
+//            return {
+//                columns: [{
+//                    elementId: 'port_tuples_vmi_collection',
+//                    view: "FormEditableGridView",
+//                    viewConfig: {
+//                        colSpan: '2',
+//                        path: 'portTupleInterfaces',
+//                        collection: 'portTupleInterfaces()',
+//                        validation: 'portTupleInterfacesValidation',
+//                        templateId: cowc.TMP_EDITABLE_GRID_VIEW,
+//                        /*
+//                        collectionActions: {
+//                            add: {onClick: "addPortTupleInterface()",
+//                                  iconClass: 'icon-plus',
+//                                  buttonTitle: 'Add Interface'
+//                            }
+//                        },
+//                        */
+//                        //rows: [{
+//                            /*
+//                            rowActions: [
+//                                {onClick: "deletePortTupleInterface()",
+//                                 iconClass: 'icon-minus'}
+//                            ],
+//                            */
+//                            columns: [{
+//                                elementId: 'interfaceType',
+//                                view: 'FormInputView',
+//                                class: "",
+//                                name:'Interface Type',
+//                                viewConfig: {
+//                                    placeholder: 'Select Interface Type',
+//                                    width: 250,
+//                                    disabled: true,
+//                                    templateId:
+//                                        cowc.TMPL_EDITABLE_GRID_INPUT_VIEW,
+//                                    path: 'interfaceType',
+//                                    dataBindValue: 'interfaceType()'
+//                                }
+//                            },
+//                            {
+//                                elementId: 'interface',
+//                                view: 'FormDropdownView',
+//                                class: "",
+//                                name:'Virtual Machine Interface',
+//                                viewConfig: {
+//                                    templateId:
+//                                        cowc.TMPL_EDITABLE_GRID_DROPDOWN_VIEW,
+//                                    width: 230,
+//                                    path: 'interface',
+//                                    disabled: 'disable()',
+//                                    dataBindValue: 'interface()',
+//                                    dataBindOptionList: 'vmiListData()',
+//                                    elementConfig: {
+//                                        minimumResultsForSearch: 1,
+//                                        placeholder: 'Select Virtual Machine' +
+//                                                     ' Interface',
+//                                    }
+//                                }
+//                            //}]
+//                        }]
+//                    }
+//                }]
+//            }
             return {
-                columns: [{
-                    elementId: 'port_tuples_vmi_collection',
-                    view: "FormEditableGridView",
+                    columns: [{
+                    elementId: 'community_attr5',
+                    view: 'FormMultiselectView',
+                    name:'Tuple',
+                    width:500,
+                    class: "",
                     viewConfig: {
                         colSpan: '2',
-                        path: 'portTupleInterfaces',
-                        collection: 'portTupleInterfaces()',
-                        validation: 'portTupleInterfacesValidation',
-                        templateId: cowc.TMP_EDITABLE_GRID_VIEW,
-                        /*
-                        collectionActions: {
-                            add: {onClick: "addPortTupleInterface()",
-                                  iconClass: 'icon-plus',
-                                  buttonTitle: 'Add Interface'
-                            }
-                        },
-                        */
-                        //rows: [{
-                            /*
-                            rowActions: [
-                                {onClick: "deletePortTupleInterface()",
-                                 iconClass: 'icon-minus'}
-                            ],
-                            */
-                            columns: [{
-                                elementId: 'interfaceType',
-                                view: 'FormInputView',
-                                class: "",
-                                name:'Interface Type',
-                                viewConfig: {
-                                    placeholder: 'Select Interface Type',
-                                    width: 250,
-                                    disabled: true,
-                                    templateId:
-                                        cowc.TMPL_EDITABLE_GRID_INPUT_VIEW,
-                                    path: 'interfaceType',
-                                    dataBindValue: 'interfaceType()'
-                                }
-                            },
-                            {
-                                elementId: 'interface',
-                                view: 'FormDropdownView',
-                                class: "",
-                                name:'Virtual Machine Interface',
-                                viewConfig: {
-                                    templateId:
-                                        cowc.TMPL_EDITABLE_GRID_DROPDOWN_VIEW,
-                                    width: 230,
-                                    path: 'interface',
-                                    disabled: 'disable()',
-                                    dataBindValue: 'interface()',
-                                    dataBindOptionList: 'vmiListData()',
-                                    elementConfig: {
-                                        minimumResultsForSearch: 1,
-                                        placeholder: 'Select Virtual Machine' +
-                                                     ' Interface',
-                                    }
-                                }
-                            //}]
-                        }]
+                        width:500,
+                        path: 'community_attr',
+                        label: '',
+                        dataBindValue: 'portTupleInterfaces()',
+                        templateId:
+                          cowc.TMPL_EDITABLE_GRID_MULTISELECT_VIEW,
+                        elementConfig: {
+                            placeholder: 'Select Policy',
+                            dataTextField: "text",
+                            dataValueField: "id",
+                            data : [
+                                    { text: "left", children: [
+                                      { id: "(10.84.46.10) - 540b856a-7dce-48a2-93ac-cd9d082b5bfb", text: "(10.84.46.10) - 540b856a-7dce-48a2-93ac-cd9d082b5bfb" },
+                                      { id: "b9147fa8-1441-46d9-8362-6081daeb7ff0", text: "b9147fa8-1441-46d9-8362-6081daeb7ff0" }
+                                  ] },
+                                  { text: "right", children: [
+                                      { id: "(10.84.46.10) - 540b856a-7dce-48a2-93ac-cd9d082b5bfb", text: "(10.84.46.10) - 540b856a-7dce-48a2-93ac-cd9d082b5bfb" },
+                                      { id: "b9147fa8-1441-46d9-8362-6081daeb7ff0", text: "b9147fa8-1441-46d9-8362-6081daeb7ff0" }
+                                  ] },
+                                  { text: "management", children: [
+                                      { id: "b9147fa8-1441-46d9-8362-6081daeb7ff0", text: "b9147fa8-1441-46d9-8362-6081daeb7ff0" },
+                                      { id: "(10.84.46.10) - 540b856a-7dce-48a2-93ac-cd9d082b5bfb", text: "(10.84.46.10) - 540b856a-7dce-48a2-93ac-cd9d082b5bfb" }
+                                  ] }
+                              ],
+                            tags: true,
+                            showParentInSelection: true
+                        }
                     }
-                }]
-            }
+                    }]
+                }
         },
         this.getPortTuplesView = function (self, isDisabled) {
             return {
@@ -592,7 +631,7 @@ define([
                                             {onClick: "deletePortTuple()",
                                              iconClass: 'icon-minus'}
                                         ]},*/
-                                        this.getPortTupleNameViewConfig(isDisabled),
+//                                        this.getPortTupleNameViewConfig(isDisabled),
                                         this.getPortTupleViewConfig(isDisabled),
                                     ]
                                 }

@@ -41,7 +41,8 @@ define([
             availability_zone: 'ANY',
             host_list: [],
             host: null,
-            parent_uuid: null
+            parent_uuid: null,
+            community_attr: null
         },
         validations: {
             svcInstValidations: {

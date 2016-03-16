@@ -334,6 +334,7 @@ define([
                         }
                     }]
                 },
+                
                 /*
                 {
                     columns: [{
@@ -465,26 +466,197 @@ define([
                         }
                     }]
                 },
+//                {
+//                    columns: [
+//                        svcInstUtils.getInterfaceCollectionView(isDisabled)
+//                    ]
+//                },
                 {
-                    columns: [
-                        svcInstUtils.getInterfaceCollectionView(isDisabled)
-                    ]
+                    columns: [{
+                    elementId: 'community_attr2',
+                    view: 'FormMultiselectView',
+                    class: "",
+                    label: 'Routing Policy',
+                    viewConfig: {
+                        path: 'community_attr',
+                        label: 'Interfaces ',
+                        dataBindValue: 'community_attr()',
+                        elementConfig: {
+                            placeholder: 'Select Policy',
+                            dataTextField: "text",
+                            dataValueField: "id",
+                            data : [
+                                    { text: "left", children: [
+                                      { id: "lrp1", text: "rp1 (default-domain:demo)" },
+                                      { id: "lrp2", text: "rp2 (default-domain:demo)" }
+                                  ] },
+                                  { text: "right", children: [
+                                      { id: "rrp1", text: "rp1 (default-domain:demo)" },
+                                      { id: "rrp2", text: "rp2 (default-domain:demo)" }
+                                  ] },
+                                  { text: "management", children: [
+                                      { id: "mrp1", text: "rp1 (default-domain:demo)" },
+                                      { id: "mrp2", text: "rp2 (default-domain:demo)" }
+                                  ] }
+                              ],
+                            tags: true,
+                            showParentInSelection: true
+                        }
+                    }
+                    }]
+                },
+                {
+                    columns: [{
+                    elementId: 'community_attr',
+                    view: 'FormMultiselectView',
+                    class: "",
+                    label: 'Routing Policy',
+                    viewConfig: {
+                        path: 'community_attr',
+                        label: 'Routing Policy',
+                        dataBindValue: 'community_attr()',
+                        elementConfig: {
+                            placeholder: 'Select Policy',
+                            dataTextField: "text",
+                            dataValueField: "id",
+                            data : [
+                                    { text: "left", children: [
+                                      { id: "lrp1", text: "rp1 (default-domain:demo)" },
+                                      { id: "lrp2", text: "rp2 (default-domain:demo)" }
+                                  ] },
+                                  { text: "right", children: [
+                                      { id: "rrp1", text: "rp1 (default-domain:demo)" },
+                                      { id: "rrp2", text: "rp2 (default-domain:demo)" }
+                                  ] },
+                                  { text: "management", children: [
+                                      { id: "mrp1", text: "rp1 (default-domain:demo)" },
+                                      { id: "mrp2", text: "rp2 (default-domain:demo)" }
+                                  ] }
+                              ],
+                            tags: true,
+                            showParentInSelection: true
+                        }
+                    }
+                    }]
+                },
+                {
+                    columns: [{
+                    elementId: 'community_attr1',
+                    view: 'FormMultiselectView',
+                    class: "",
+                    label: 'Route Aggregate',
+                    viewConfig: {
+                        path: 'community_attr',
+                        label: 'Route Aggregate',
+                        dataBindValue: 'community_attr()',
+                        elementConfig: {
+                            placeholder: 'Select Policy',
+                            dataTextField: "text",
+                            dataValueField: "id",
+                            data : [
+                                    { text: "left", children: [
+                                      { id: "lrp1", text: "rp1 (default-domain:demo)" },
+                                      { id: "lrp2", text: "rp2 (default-domain:demo)" }
+                                  ] },
+                                  { text: "right", children: [
+                                      { id: "rrp1", text: "rp1 (default-domain:demo)" },
+                                      { id: "rrp2", text: "rp2 (default-domain:demo)" }
+                                  ] },
+                                  { text: "management", children: [
+                                      { id: "mrp1", text: "rp1 (default-domain:demo)" },
+                                      { id: "mrp2", text: "rp2 (default-domain:demo)" }
+                                  ] }
+                              ],
+                            tags: true,
+                            showParentInSelection: true
+                        }
+                    }
+                    }]
+                },
+                {
+                    columns: [{
+                    elementId: 'community_attr4',
+                    view: 'FormMultiselectView',
+                    class: "",
+                    label: 'Routing Policy',
+                    viewConfig: {
+                        path: 'community_attr',
+                        label: 'Static Route',
+                        dataBindValue: 'community_attr()',
+                        elementConfig: {
+                            placeholder: 'Select Policy',
+                            dataTextField: "text",
+                            dataValueField: "id",
+                            data : [
+                                    { text: "left", children: [
+                                      { id: "lrp1", text: "rp1 (default-domain:demo)" },
+                                      { id: "lrp2", text: "rp2 (default-domain:demo)" }
+                                  ] },
+                                  { text: "right", children: [
+                                      { id: "rrp1", text: "rp1 (default-domain:demo)" },
+                                      { id: "rrp2", text: "rp2 (default-domain:demo)" }
+                                  ] },
+                                  { text: "management", children: [
+                                      { id: "mrp1", text: "rp1 (default-domain:demo)" },
+                                      { id: "mrp2", text: "rp2 (default-domain:demo)" }
+                                  ] }
+                              ],
+                            tags: true,
+                            showParentInSelection: true
+                        }
+                    }
+                    }]
+                },
+                {
+                    columns: [{
+                    elementId: 'community_attr4',
+                    view: 'FormMultiselectView',
+                    class: "",
+                    label: 'Routing Policy',
+                    viewConfig: {
+                        path: 'community_attr',
+                        label: 'Health Check',
+                        dataBindValue: 'community_attr()',
+                        elementConfig: {
+                            placeholder: 'Select Policy',
+                            dataTextField: "text",
+                            dataValueField: "id",
+                            data : [
+                                    { text: "left", children: [
+                                      { id: "lrp1", text: "rp1 (default-domain:demo)" },
+                                      { id: "lrp2", text: "rp2 (default-domain:demo)" }
+                                  ] },
+                                  { text: "right", children: [
+                                      { id: "rrp1", text: "rp1 (default-domain:demo)" },
+                                      { id: "rrp2", text: "rp2 (default-domain:demo)" }
+                                  ] },
+                                  { text: "management", children: [
+                                      { id: "mrp1", text: "rp1 (default-domain:demo)" },
+                                      { id: "mrp2", text: "rp2 (default-domain:demo)" }
+                                  ] }
+                              ],
+                            tags: true,
+                            showParentInSelection: true
+                        }
+                    }
+                    }]
                 },
                 {
                     columns: [
                         svcInstUtils.getPortTuplesView(self, isDisabled)
                     ]
                 },
-                {
-                    columns: [
-                        svcInstUtils.getSvcInstV1PropView(isDisabled)
-                    ]
-                },
-                {
-                    columns: [
-                        svcInstUtils.getSvcInstV2PropView(isDisabled)
-                    ]
-                }]
+//                {
+//                    columns: [
+//                        svcInstUtils.getSvcInstV1PropView(isDisabled)
+//                    ]
+//                },
+//                {
+//                    columns: [
+//                        svcInstUtils.getSvcInstV2PropView(isDisabled)
+//                    ]
+//                }
+                ]
             }
         }
         return svcInstViewConfig;
