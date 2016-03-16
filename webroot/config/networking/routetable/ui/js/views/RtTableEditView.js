@@ -161,8 +161,18 @@ define([
                                         placeholder: 'Select or Enter Communities',
                                         dataTextField: "text",
                                         dataValueField: "id",
-                                        data : ctwc.DEFAULT_COMMUNITIES,
-                                        tags: true
+//                                        data : ctwc.DEFAULT_COMMUNITIES,
+                                        data : [
+                                                { text: "Western", children: [
+                                                                              { id: "CA", text: "California" },
+                                                                              { id: "AZ", text: "Arizona" }
+                                                                          ] },
+                                                                          { text: "Eastern", children: [
+                                                                              { id: "FL", text: "Florida" }
+                                                                          ] }
+                                                                      ],
+                                        tags: true,
+                                        showParentInSelection: true
                                     }
                                 }
                             };

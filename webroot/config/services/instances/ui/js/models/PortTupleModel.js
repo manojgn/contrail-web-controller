@@ -17,6 +17,7 @@ define([
             portTupleName: "",
             portTupleDisplayName: "",
             portTupleData: null,
+            dummyportTupleInterfaces:[],
             intfTypes: [],
             disable: false
         },

@@ -451,70 +451,109 @@ define([
             }
         },
         this.getPortTupleViewConfig = function(isDisabled) {
+//            return {
+//                columns: [{
+//                    elementId: 'port_tuples_vmi_collection',
+//                    view: "FormEditableGridView",
+//                    viewConfig: {
+//                        colSpan: '2',
+//                        path: 'portTupleInterfaces',
+//                        collection: 'portTupleInterfaces()',
+//                        validation: 'portTupleInterfacesValidation',
+//                        templateId: cowc.TMP_EDITABLE_GRID_VIEW,
+//                        /*
+//                        collectionActions: {
+//                            add: {onClick: "addPortTupleInterface()",
+//                                  iconClass: 'icon-plus',
+//                                  buttonTitle: 'Add Interface'
+//                            }
+//                        },
+//                        */
+//                        //rows: [{
+//                            /*
+//                            rowActions: [
+//                                {onClick: "deletePortTupleInterface()",
+//                                 iconClass: 'icon-minus'}
+//                            ],
+//                            */
+//                            columns: [{
+//                                elementId: 'interfaceType',
+//                                view: 'FormInputView',
+//                                class: "",
+//                                name:'Interface Type',
+//                                viewConfig: {
+//                                    placeholder: 'Select Interface Type',
+//                                    width: 250,
+//                                    disabled: true,
+//                                    templateId:
+//                                        cowc.TMPL_EDITABLE_GRID_INPUT_VIEW,
+//                                    path: 'interfaceType',
+//                                    dataBindValue: 'interfaceType()'
+//                                }
+//                            },
+//                            {
+//                                elementId: 'interface',
+//                                view: 'FormDropdownView',
+//                                class: "",
+//                                name:'Virtual Machine Interface',
+//                                viewConfig: {
+//                                    templateId:
+//                                        cowc.TMPL_EDITABLE_GRID_DROPDOWN_VIEW,
+//                                    width: 230,
+//                                    path: 'interface',
+//                                    disabled: 'disable()',
+//                                    dataBindValue: 'interface()',
+//                                    dataBindOptionList: 'vmiListData()',
+//                                    elementConfig: {
+//                                        minimumResultsForSearch: 1,
+//                                        placeholder: 'Select Virtual Machine' +
+//                                                     ' Interface',
+//                                    }
+//                                }
+//                            //}]
+//                        }]
+//                    }
+//                }]
+//            }
             return {
-                columns: [{
-                    elementId: 'port_tuples_vmi_collection',
-                    view: "FormEditableGridView",
+                    columns: [{
+                    elementId: 'community_attr5',
+                    view: 'FormMultiselectView',
+                    name:'Tuple',
+                    width:500,
+                    class: "",
                     viewConfig: {
                         colSpan: '2',
-                        path: 'portTupleInterfaces',
-                        collection: 'portTupleInterfaces()',
-                        validation: 'portTupleInterfacesValidation',
-                        templateId: cowc.TMP_EDITABLE_GRID_VIEW,
-                        /*
-                        collectionActions: {
-                            add: {onClick: "addPortTupleInterface()",
-                                  iconClass: 'icon-plus',
-                                  buttonTitle: 'Add Interface'
-                            }
-                        },
-                        */
-                        //rows: [{
-                            /*
-                            rowActions: [
-                                {onClick: "deletePortTupleInterface()",
-                                 iconClass: 'icon-minus'}
-                            ],
-                            */
-                            columns: [{
-                                elementId: 'interfaceType',
-                                view: 'FormInputView',
-                                class: "",
-                                name:'Interface Type',
-                                viewConfig: {
-                                    placeholder: 'Select Interface Type',
-                                    width: 250,
-                                    disabled: true,
-                                    templateId:
-                                        cowc.TMPL_EDITABLE_GRID_INPUT_VIEW,
-                                    path: 'interfaceType',
-                                    dataBindValue: 'interfaceType()'
-                                }
-                            },
-                            {
-                                elementId: 'interface',
-                                view: 'FormDropdownView',
-                                class: "",
-                                name:'Virtual Machine Interface',
-                                viewConfig: {
-                                    templateId:
-                                        cowc.TMPL_EDITABLE_GRID_DROPDOWN_VIEW,
-                                    width: 230,
-                                    path: 'interface',
-                                    disabled: 'disable()',
-                                    dataBindValue: 'interface()',
-                                    dataBindOptionList: 'vmiListData()',
-                                    elementConfig: {
-                                        minimumResultsForSearch: 1,
-                                        placeholder: 'Select Virtual Machine' +
-                                                     ' Interface',
-                                    }
-                                }
-                            //}]
-                        }]
+                        width:500,
+                        path: 'community_attr',
+                        label: '',
+                        dataBindValue: 'dummyportTupleInterfaces()',
+                        templateId:
+                          cowc.TMPL_EDITABLE_GRID_MULTISELECT_VIEW,
+                        elementConfig: {
+                            placeholder: 'Select Interfaces',
+                            dataTextField: "text",
+                            dataValueField: "id",
+                            data : [
+                                    { text: "left", children: [
+                                      { id: "(10.84.46.10) - 540b856a-7dce-48a2-93ac-cd9d082b5bfb", text: "(10.84.46.10) - 540b856a-7dce-48a2-93ac-cd9d082b5bfb" },
+                                      { id: "b9147fa8-1441-46d9-8362-6081daeb7ff0", text: "b9147fa8-1441-46d9-8362-6081daeb7ff0" }
+                                  ] },
+                                  { text: "right", children: [
+                                      { id: "(10.84.46.10) - 540b856a-7dce-48a2-93ac-cd9d082b5bfb", text: "(10.84.46.10) - 540b856a-7dce-48a2-93ac-cd9d082b5bfb" },
+                                      { id: "b9147fa8-1441-46d9-8362-6081daeb7ff0", text: "b9147fa8-1441-46d9-8362-6081daeb7ff0" }
+                                  ] },
+                                  { text: "management", children: [
+                                      { id: "b9147fa8-1441-46d9-8362-6081daeb7ff0", text: "b9147fa8-1441-46d9-8362-6081daeb7ff0" },
+                                      { id: "(10.84.46.10) - 540b856a-7dce-48a2-93ac-cd9d082b5bfb", text: "(10.84.46.10) - 540b856a-7dce-48a2-93ac-cd9d082b5bfb" }
+                                  ] }
+                              ],
+                            tags: true,
+                            showParentInSelection: true
+                        }
                     }
-                }]
-            }
+                    }]
+                }
         },
         this.getPortTuplesView = function (self, isDisabled) {
             return {
@@ -549,12 +588,165 @@ define([
                                             {onClick: "deletePortTuple()",
                                              iconClass: 'icon-minus'}
                                         ]},*/
-                                        this.getPortTupleNameViewConfig(isDisabled),
+//                                        this.getPortTupleNameViewConfig(isDisabled),
                                         this.getPortTupleViewConfig(isDisabled),
                                     ]
                                 }
                             }]
                         }]
+                    }
+                }]
+            }
+        },
+        this.getAdvancedView = function (self, isDisabled) {
+            return {
+                elementId: 'advacedViewId',
+                view: 'AccordianView',
+                active:false,
+                viewConfig: [{
+                    elementId: 'advancedOptionsCollectionAccordian',
+                    title: 'Advanced Options',
+                    view: 'SectionView',
+                    active:false,
+                    viewConfig: {
+                        rows: [
+                            {
+                                columns: [{
+                                elementId: 'community_attr',
+                                view: 'FormMultiselectView',
+                                class: "",
+                                label: 'Routing Policy',
+                                viewConfig: {
+                                    path: 'community_attr',
+                                    label: 'Routing Policy',
+                                    dataBindValue: 'dummy()',
+                                    elementConfig: {
+                                        placeholder: 'Select Interface and Policy',
+                                        dataTextField: "text",
+                                        dataValueField: "id",
+                                        data : [
+                                                { text: "left", children: [
+                                                  { id: "lrp1", text: "rp1 (default-domain:demo)" },
+                                                  { id: "lrp2", text: "rp2 (default-domain:demo)" }
+                                              ] },
+                                              { text: "right", children: [
+                                                  { id: "rrp1", text: "rp1 (default-domain:demo)" },
+                                                  { id: "rrp2", text: "rp2 (default-domain:demo)" }
+                                              ] },
+                                              { text: "management", children: [
+                                                  { id: "mrp1", text: "rp1 (default-domain:demo)" },
+                                                  { id: "mrp2", text: "rp2 (default-domain:demo)" }
+                                              ] }
+                                          ],
+                                        tags: true,
+                                        showParentInSelection: true
+                                    }
+                                }
+                                }]
+                            },
+                            {
+                                columns: [{
+                                elementId: 'community_attr1',
+                                view: 'FormMultiselectView',
+                                class: "",
+                                label: 'Route Aggregate',
+                                viewConfig: {
+                                    path: 'community_attr',
+                                    label: 'Route Aggregate',
+                                    dataBindValue: 'community_attr()',
+                                    elementConfig: {
+                                        placeholder: 'Select Interface and Aggregate',
+                                        dataTextField: "text",
+                                        dataValueField: "id",
+                                        data : [
+                                                { text: "left", children: [
+                                                  { id: "lrp1", text: "rp1 (default-domain:demo)" },
+                                                  { id: "lrp2", text: "rp2 (default-domain:demo)" }
+                                              ] },
+                                              { text: "right", children: [
+                                                  { id: "rrp1", text: "rp1 (default-domain:demo)" },
+                                                  { id: "rrp2", text: "rp2 (default-domain:demo)" }
+                                              ] },
+                                              { text: "management", children: [
+                                                  { id: "mrp1", text: "rp1 (default-domain:demo)" },
+                                                  { id: "mrp2", text: "rp2 (default-domain:demo)" }
+                                              ] }
+                                          ],
+                                        tags: true,
+                                        showParentInSelection: true
+                                    }
+                                }
+                                }]
+                            },
+                            {
+                                columns: [{
+                                elementId: 'community_attr4',
+                                view: 'FormMultiselectView',
+                                class: "",
+                                label: 'Routing Policy',
+                                viewConfig: {
+                                    path: 'community_attr',
+                                    label: 'Static Route',
+                                    dataBindValue: 'community_attr()',
+                                    elementConfig: {
+                                        placeholder: 'Select Interface and Static Route',
+                                        dataTextField: "text",
+                                        dataValueField: "id",
+                                        data : [
+                                                { text: "left", children: [
+                                                  { id: "lrp1", text: "rp1 (default-domain:demo)" },
+                                                  { id: "lrp2", text: "rp2 (default-domain:demo)" }
+                                              ] },
+                                              { text: "right", children: [
+                                                  { id: "rrp1", text: "rp1 (default-domain:demo)" },
+                                                  { id: "rrp2", text: "rp2 (default-domain:demo)" }
+                                              ] },
+                                              { text: "management", children: [
+                                                  { id: "mrp1", text: "rp1 (default-domain:demo)" },
+                                                  { id: "mrp2", text: "rp2 (default-domain:demo)" }
+                                              ] }
+                                          ],
+                                        tags: true,
+                                        showParentInSelection: true
+                                    }
+                                }
+                                }]
+                            },
+                            {
+                                columns: [{
+                                elementId: 'community_attr9',
+                                view: 'FormMultiselectView',
+                                class: "",
+                                label: 'Routing Policy',
+                                viewConfig: {
+                                    path: 'community_attr',
+                                    label: 'Health Check',
+                                    dataBindValue: 'community_attr()',
+                                    elementConfig: {
+                                        placeholder: 'Select Interface and Health Check',
+                                        dataTextField: "text",
+                                        dataValueField: "id",
+                                        data : [
+                                                { text: "left", children: [
+                                                  { id: "lrp1", text: "rp1 (default-domain:demo)" },
+                                                  { id: "lrp2", text: "rp2 (default-domain:demo)" }
+                                              ] },
+                                              { text: "right", children: [
+                                                  { id: "rrp1", text: "rp1 (default-domain:demo)" },
+                                                  { id: "rrp2", text: "rp2 (default-domain:demo)" }
+                                              ] },
+                                              { text: "management", children: [
+                                                  { id: "mrp1", text: "rp1 (default-domain:demo)" },
+                                                  { id: "mrp2", text: "rp2 (default-domain:demo)" }
+                                              ] }
+                                          ],
+                                        tags: true,
+                                        showParentInSelection: true
+                                    }
+                                }
+                                }]
+                            }
+                       ]
                     }
                 }]
             }
