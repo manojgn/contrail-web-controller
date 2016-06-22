@@ -33,6 +33,8 @@ var routingPolicyConfig =
     require('../../networking/routingpolicy/api/routingpolicyconfig.api');
 var svcInst =
     require('../../services/instances/api/serviceinstanceconfig.api');
+var jsonDiff      = require(process.mainModule.exports["corePath"] +
+    '/src/serverroot/common/jsondiff');
 
 var errorData = [];
 var configCBDelete = 
@@ -605,9 +607,11 @@ function createOrUpdateConfigObjectCB (dataObjArr, callback)
     var data = dataObjArr['data'];
     var type = dataObjArr['type'];
     if (global.HTTP_REQUEST_PUT == type) {
-        configApiServer.apiPut(reqUrl, data, appData, function(error, data) {
-            callback(error, data);
-        });
+        jsonDiff.getConfigDiffAndMakeCall(reqUrl, appData, data,
+            function(err, data){
+                callback(err, data);
+            }
+        );
     } else {
         configApiServer.apiPost(reqUrl, data, appData, function(error, data) {
             callback(error, data);
