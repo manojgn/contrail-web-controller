@@ -151,6 +151,7 @@ define([
             viewConfig: {
                 class: 'mon-infra-chart chartMargin',
                 chartOptions: {
+                    colors: cowc.THREE_NODE_COLOR,
                     bucketSize: this.STATS_BUCKET_DURATION,
                     showControls: true,
                     tickPadding: 8,
@@ -159,6 +160,27 @@ define([
                         top: 20,
                         right: 0,
                         bottom: 15
+                    },
+                    yAxisOffset: 25,
+                    defaultZeroLineDisplay: true
+                }
+            }
+        };
+        this.stackAreaChartDefaultViewConfig = {
+            view: 'StackedAreaChartView',
+            viewConfig: {
+                class: 'mon-infra-chart chartMargin',
+                chartOptions: {
+                    colors: cowc.FIVE_NODE_COLOR,
+                    bucketSize: this.STATS_BUCKET_DURATION,
+                    showControls: true,
+                    height: 230,
+                    tickPadding: 8,
+                    margin: {
+                        left: 45,
+                        top: 20,
+                        right: 0,
+                        bottom: 40
                     },
                     yAxisOffset: 25,
                     defaultZeroLineDisplay: true
@@ -174,11 +196,11 @@ define([
                         brush: false,
                         xAxisLabel: '',
                         yAxisLabel: '',
-                        groupBy: 'Source',
+//                        groupBy: 'Source',
                         yField: '',
                         yFieldOperation: 'average',
                         bucketSize: this.STATS_BUCKET_DURATION,
-                        colors: {},
+//                        colors: {},
                         title: '',
                         axisLabelDistance : 0,
                         margin: {

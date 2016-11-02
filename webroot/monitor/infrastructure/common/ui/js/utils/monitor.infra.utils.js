@@ -2,8 +2,9 @@ define([
     'underscore',
     'handlebars',
     'contrail-list-model',
-    'core-alarm-utils'
-], function (_, Handlebars, ContrailListModel,coreAlarmUtils) {
+    'core-alarm-utils',
+    'core-utils'
+], function (_, Handlebars, ContrailListModel,coreAlarmUtils,cowu) {
     var MonitorInfraUtils = function () {
         var self = this;
         var noDataStr = monitorInfraConstants.noDataStr;
@@ -1627,12 +1628,19 @@ define([
                 {label: ctwl.TITLE_CPU, value:$.isNumeric(currObj['cpu']) ? currObj['cpu']  : '-'},
                 {label:'Memory', value:$.isNumeric(currObj['memory']) ? formatMemory(currObj['memory']) : currObj['memory']}
             ];
-            if(currObj['type'] == 'vRouter') {
-                var bandwidthTooltipContent = {
-                    label: 'Throughput (In/Out)',
-                    value: formatThroughput(currObj['inThroughput'])
-                    + ' / ' + formatThroughput(currObj['outThroughput'])};
-                tooltipContents = tooltipContents.concat(bandwidthTooltipContent);
+            if (cfg.tooltipContents != null) {
+                tooltipContents = cfg.tooltipContents;
+            } else {
+                if(currObj['type'] == 'vRouter') {
+                    var bandwidthTooltipContent = [
+                        {label: 'Virtual Networks', value:currObj['vnCnt']},
+                        {label: 'Instances', value:currObj['instCnt']},
+                        {label: 'Interfaces', value:currObj['intfCnt']},
+                        {label: 'Throughput (In/Out)',
+                                value: formatThroughput(currObj['inThroughput'])
+                                + ' / ' + formatThroughput(currObj['outThroughput'])}];
+                    tooltipContents = tooltipContents.concat(bandwidthTooltipContent);
+                }
             }
             //Get tooltipAlerts
             tooltipContents = tooltipContents.concat(self.getTooltipAlerts(currObj));
@@ -2383,63 +2391,250 @@ define([
                     }
             );
         };
-
-        self.getStatsModelConfig = function (statsConfig) {
-            var postData = {
-                "autoSort": true,
-                "async": false,
-                "formModelAttrs": {
-                  "table_type": "STAT",
-                  "query_prefix": "stat",
-                  "from_time": Date.now() - (2 * 60 * 60 * 1000),
-                  "from_time_utc": Date.now() - (2 * 60 * 60 * 1000),
-                  "to_time": Date.now(),
-                  "to_time_utc": Date.now(),
-                  "time_granularity_unit": "secs",
-                  "time_granularity": 150,
-                  "limit": "150000"
+        /**
+         * Takes input as an array of configs.
+         * The first one is considered as primary req and the rest are added as
+         * vl config
+         */
+        self.getStatsModelConfig = function (config) {
+            if (!_.isArray(config)) {
+                config = [config];
+            }
+            var primaryRemoteConfig ;
+            var vlRemoteList = [];
+            for (var i = 0; i < config.length; i++) {
+                var statsConfig = config[i];
+                var postData = {
+                    "autoSort": true,
+                    "async": false,
+                    "formModelAttrs": {
+                      "table_type": "STAT",
+                      "query_prefix": "stat",
+                      "from_time": Date.now() - (2 * 60 * 60 * 1000),
+                      "from_time_utc": Date.now() - (2 * 60 * 60 * 1000),
+                      "to_time": Date.now(),
+                      "to_time_utc": Date.now(),
+                      "time_granularity_unit": "secs",
+                      "time_granularity": 150,
+                      "limit": "150000"
+                    }
+                };
+    
+                if (statsConfig['table_name'] != null) {
+                    postData['formModelAttrs']['table_name'] = statsConfig['table_name'];
                 }
-            };
+                if (statsConfig['select'] != null) {
+                    postData['formModelAttrs']['select'] = statsConfig['select'];
+                }
+                if (statsConfig['where'] != null) {
+                    postData['formModelAttrs']['where'] = statsConfig['where'];
+                }
+                if (statsConfig['time_granularity'] != null) {
+                    postData['formModelAttrs']['time_granularity'] = statsConfig['time_granularity'];
+                }
+                if (statsConfig['time_granularity_unit'] != null) {
+                    postData['formModelAttrs']['time_granularity_unit'] = statsConfig['time_granularity_unit'];
+                }
 
-            if (statsConfig['table_name'] != null) {
-                postData['formModelAttrs']['table_name'] = statsConfig['table_name'];
-            }
-            if (statsConfig['select'] != null) {
-                postData['formModelAttrs']['select'] = statsConfig['select'];
-            }
-            if (statsConfig['where'] != null) {
-                postData['formModelAttrs']['where'] = statsConfig['where'];
-            }
-            if (statsConfig['time_granularity'] != null) {
-                postData['formModelAttrs']['time_granularity'] = statsConfig['time_granularity'];
-            }
-            if (statsConfig['time_granularity_unit'] != null) {
-                postData['formModelAttrs']['time_granularity_unit'] = statsConfig['time_granularity_unit'];
+                if(i == 0) {
+                    var remoteObj = {
+                            ajaxConfig : {
+                                url : "/api/qe/query",
+                                type: 'POST',
+                                data: JSON.stringify(postData)
+                            },
+                            dataParser : function (response) {
+                                var data = response['data'];
+                                if (statsConfig['parser'] != null && typeof statsConfig['parser'] == "function") {
+                                    data = statsConfig['parser'](data);
+                                }
+                                return data;
+                            }
+                        };
+                    primaryRemoteConfig = remoteObj;
+                } else {
+                    var vlRemoteObj = {
+                        getAjaxConfig: function() {
+                            return {
+                                url : "/api/qe/query",
+                                type: 'POST',
+                                data: JSON.stringify(postData)
+                            }
+                        },
+                        successCallback: function(response, contrailListModel) {
+                            var data = getValueByJsonPath(response,'data',[]);
+                            statsConfig['mergeFn'] (data,contrailListModel,'MAX(flow_rate.active_flows)');
+                        }
+                    };
+                    vlRemoteList.push (vlRemoteObj);
+                }
             }
             var listModelConfig =  {
-                remote : {
-                    ajaxConfig : {
-                        url : "/api/qe/query",
-                        type: 'POST',
-                        data: JSON.stringify(postData)
-                    },
-                    dataParser : function (response) {
-                        var data = response['data'];
-                        if (statsConfig['parser'] != null && typeof statsConfig['parser'] == "function") {
-                            data = statsConfig['parser'](data);
-                        }
-                        return data;
-                    }
-                },
-                cacheConfig : {
-
-                }
+                remote : primaryRemoteConfig,
+                cacheConfig:{}
             };
+            if(vlRemoteList.length > 0) {
+                var vlRemoteConfig = {vlRemoteList:vlRemoteList};
+                listModelConfig['vlRemoteConfig'] = vlRemoteConfig;
+            } 
             if (statsConfig['ucid'] != null) {
                 listModelConfig['cacheConfig']['ucid'] = statsConfig['ucid'];
             }
             return listModelConfig;
         };
+
+        self.parseAndMergeStats = function (response,primaryDS) {
+            var primaryData = primaryDS.getItems();
+            if(primaryData.length == 0) {
+                primaryDS.setData(response);
+                return;
+            }
+            if(response.length == 0) {
+                return;
+            }
+            //If both arrays are not having first element at same time
+            //remove one item accordingly
+            while (primaryData[0]['T='] != response[0]['T=']) {
+                if(primaryData[0]['T='] > response[0]['T=']) {
+                    response = response.slice(1,response.length-1);
+                } else {
+                    primaryData = primaryData.slice(1,primaryData.length-1);
+                }
+            }
+            var cnt = primaryData.length;
+            var responseKeys = _.keys(response[0]);
+            for (var i = 0; i < cnt ; i++) {
+//                primaryData[i]['T'] = primaryData[i]['T='];
+                for (var j = 0; j < responseKeys.length; j++) {
+                    if (response[i] != null && response[i][responseKeys[j]] != null) {
+                        primaryData[i][responseKeys[j]] =
+                            response[i][responseKeys[j]];
+                    } else if (i > 0){
+                        primaryData[i][responseKeys[j]] =
+                            primaryData[i-1][responseKeys[j]];
+                    }
+                }
+            }
+            primaryDS.updateData(primaryData);
+        };
+
+        this.parseDataForScatterChart = function(data,options) {
+            //Loop through and set the x, y and size field based on the chartOptions selected
+            var xField = getValueByJsonPath(options,'xField','x');
+            var yField = getValueByJsonPath(options,'yField','y');
+            var sizeField = getValueByJsonPath(options,'sizeField','size');
+            var xFormatter = options.xFormatter;
+            var yFormatter = options.yFormatter;
+            var sizeFormatter = options.sizeFormatter;
+            var ret =  [];
+            $.each(data,function(i,d){
+                d['x'] = (xFormatter)? xFormatter(getValueByJsonPath(d,xField,0))
+                        : getValueByJsonPath(d,xField,0);
+//                d['xField'] = 'x';
+                d['y'] = (yFormatter)? yFormatter(getValueByJsonPath(d,yField,0))
+                        : getValueByJsonPath(d,yField,0);
+//                d['yField'] = 'y';
+                d['size'] = (sizeFormatter)? sizeFormatter(getValueByJsonPath(d,sizeField,0))
+                        : getValueByJsonPath(d,sizeField,0);
+                ret.push(d);
+            });
+            return ret;
+        };
+        self.getVRouterScatterChartTooltipFn = function(currObj,formatType,options) {
+            if(currObj['children'] != null && currObj['children'].length == 1)
+                return self.getNodeTooltipContents(currObj['children'][0], {
+                    formatType: formatType,
+                    onClickHandler: monitorInfraUtils.onvRouterDrillDown,
+                    options: options
+                });
+            else
+                return self.getNodeTooltipContents(currObj, {
+                    formatType: formatType,
+                    onClickHandler: monitorInfraUtils.onvRouterDrillDown,
+                    tooltipContents: getValueByJsonPath(options,'tooltipContents')
+                });
+        },
+        self.getDefaultScatterChartTooltipFn = function(currObj,cfg) {
+            var tooltipContents = [];
+            if (cfg.tooltipContents != null) {
+                tooltipContents = cfg.tooltipContents;
+            }
+            var cfg = ifNull(cfg,{});
+            if(cfg['formatType'] == 'simple') {
+                return tooltipContents;
+            } else {
+                return {
+                    content: {
+                        iconClass : false,
+                        info: tooltipContents.slice(1),
+                        actions: [
+                            {
+                                type: 'link',
+                                text: 'View',
+                                iconClass: 'fa fa-external-link',
+                                callback: cfg.onClickHandler
+                            }
+                        ]
+                    },title : {
+                        name: tooltipContents[0]['value'],
+                        type: currObj['display_type']
+                    }
+                }
+            }
+        },
+        self.getScatterChartClickFn = function(currObj,options) {
+            layoutHandler.setURLHashParams({
+                type: getValueByJsonPath(options,'type'),
+                view: getValueByJsonPath(options,'type'),
+                focusedElement: {
+                    node: currObj['name'],
+                    tab: 'details'
+                }
+            }, {
+                p: getValueByJsonPath(options,'hash')
+            });
+        },
+        this.defaultScatterChartViewCfg = {
+//                title: ctwl.VROUTER_SUMMARY_TITLE,
+                view: "ZoomScatterChartView",
+                viewConfig: {
+                    loadChartInChunks: false,
+                    chartOptions: {
+                        sortFn:function(data){
+                            return data.reverse();
+                        },
+                        doBucketize: true,
+                        xLabel: ctwl.TITLE_CPU,
+                        yLabel: 'Memory (MB)',
+                        xField: 'x',
+                        yField: 'y',
+                        sizeField: 'size',
+//                        dataParser: self.parseDataForScatterChart,
+                        forceX: [0, 1],
+                        forceY: [0, 20],
+                        margin: {top:5},
+                        bubbleSizeFn: function(d) {
+                             return d3.max(d,function(d) { return d.size;});
+                        },
+                        bubbleCfg : {
+                             defaultMaxValue : monitorInfraConstants.VROUTER_DEFAULT_MAX_THROUGHPUT
+                        },
+                        tooltipConfigCB: self.vRouterTooltipFn,
+                        controlPanelConfig: {
+                             legend: {
+                                 enable: false,
+//                                 viewConfig: monitorInfraUtils.getScatterChartLegendConfigForNodes()
+                             },
+                             filter: {
+                                 enable: false,
+                                 viewConfig: self.getScatterChartFilterConfigForNodes()
+                             },
+                        },
+                        bucketTooltipFn: self.vRouterBucketTooltipFn,
+                        clickCB: self.onvRouterDrillDown
+                    }
+                }
+            };
     };
     return MonitorInfraUtils;
 });
